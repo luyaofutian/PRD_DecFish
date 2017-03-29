@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Algorithm &#8212; prd 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: cp936 -*-</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">Tkinter</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">tkMessageBox</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">ShowImage</span>
+
+<div class="viewcode-block" id="Algorithm"><a class="viewcode-back" href="../Algorithm.html#Algorithm.Algorithm">[docs]</a><span class="k">class</span> <span class="nc">Algorithm</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Algorithm.haar_check"><a class="viewcode-back" href="../Algorithm.html#Algorithm.Algorithm.haar_check">[docs]</a>    <span class="k">def</span> <span class="nf">haar_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create the haar function,using the trained haar classifier (opencv_tarining.exe with opencv ), to detect the object of the picture</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">fish_patterns</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CascadeClassifier</span><span class="p">(</span><span class="s1">&#39;haar.xml&#39;</span><span class="p">)</span>
+        <span class="c1"># Load the trained classifier</span>
+
+
+        <span class="n">haar_img</span> <span class="o">=</span> <span class="n">ShowImage</span><span class="o">.</span><span class="n">src_img</span>
+        <span class="c1"># Call the src_img image in ShowImage.py</span>
+        <span class="n">fish</span> <span class="o">=</span> <span class="n">fish_patterns</span><span class="o">.</span><span class="n">detectMultiScale</span><span class="p">(</span><span class="n">haar_img</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="o">=</span><span class="mf">1.16</span><span class="p">,</span>
+                                              <span class="n">minNeighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">minSize</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+                                              <span class="n">maxSize</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span>
+
+
+        <span class="c1"># using the trained haar classifier (opencv_tarining.exe with opencv ), to detect the object of the picture</span>
+        <span class="c1"># :param  MinNeighbors the parameters  can change the range of 1 to 10, not the same degree of fish-intensive, the smaller the value of the detection of the more</span>
+        <span class="c1"># param haar_img:Enter the picture  to detect</span>
+        <span class="c1"># param scaleFactor: Enter the characteristic parameters</span>
+        <span class="c1"># param minNeighbors:Set the minimum distance (in pixels) for defining the adjacent distance between two detected targets,</span>
+        <span class="c1"># param minSize:Set to limit the minimum size of  the detection target</span>
+        <span class="c1"># param maxSize:to limit he maximum size of the detection target</span>
+
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Mark the area of the detected fish and display the length and width of the area</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fish</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fish</span><span class="p">:</span>
+
+                <span class="n">region</span> <span class="o">=</span> <span class="n">haar_img</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">w</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)):</span>
+                    <span class="c1"># To obtain the detected area, and then use the traditional function for further screening</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">haar_img</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+                    <span class="c1"># Write the length and width of the target found on the current graph</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">haar_img</span><span class="p">,</span> <span class="s2">&quot;w: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span>
+                                <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">haar_img</span><span class="p">,</span> <span class="s2">&quot;h: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+                                <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="c1"># Print the number of fish detected</span>
+        <span class="c1"># import os</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">haar_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
+        <span class="c1"># Shrink the image, the ratio is (0.2, 0.2)</span>
+        <span class="n">shrink</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">haar_img</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;haar&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span>
+        <span class="c1"># showing the image with the marked dection object</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;result/result_haar.jpg&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span></div>
+        <span class="c1"># Save the result graph</span>
+
+<div class="viewcode-block" id="Algorithm.hog_check"><a class="viewcode-back" href="../Algorithm.html#Algorithm.Algorithm.hog_check">[docs]</a>    <span class="k">def</span> <span class="nf">hog_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create the hog function, using the trained hog classifier (opencv_tarining.exe with opencv ), to detect the object of the picture</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">fish_patterns</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CascadeClassifier</span><span class="p">(</span><span class="s1">&#39;hog.xml&#39;</span><span class="p">)</span>
+        <span class="c1"># Load the trained classifier</span>
+        <span class="n">hog_img</span> <span class="o">=</span> <span class="n">ShowImage</span><span class="o">.</span><span class="n">src_img</span>
+        <span class="c1"># Call the image of src_img in Showimage.py</span>
+        <span class="n">fish</span> <span class="o">=</span> <span class="n">fish_patterns</span><span class="o">.</span><span class="n">detectMultiScale</span><span class="p">(</span><span class="n">hog_img</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="o">=</span><span class="mf">1.16</span><span class="p">,</span>
+                                              <span class="n">minNeighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">minSize</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+                                              <span class="n">maxSize</span><span class="o">=</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span>
+        <span class="c1"># using the trained hog classifier (opencv_tarining.exe with opencv ), to detect the object of the picture</span>
+        <span class="c1"># param  MinNeighbors the parameters  can change the range of 1 to 10, not the same degree of fish-intensive, the smaller the value of the detection of the more</span>
+        <span class="c1"># param haar_img:Enter the picture  to detect</span>
+        <span class="c1"># param scaleFactor: Enter the characteristic parameters</span>
+        <span class="c1"># param minNeighbors:Set the minimum distance (in pixels) for defining the adjacent distance between two detected targets,</span>
+        <span class="c1"># param minSize:Set to limit the minimum size of  the detection target</span>
+        <span class="c1"># param maxSize:to limit he maximum size of the detection target</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Mark the area of the detected fish and display the length and width of the area</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fish</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fish</span><span class="p">:</span>
+
+                <span class="n">region</span> <span class="o">=</span> <span class="n">hog_img</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">w</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)):</span>
+                    <span class="c1"># To obtain the detected area, and then use the traditional function for further screening</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">hog_img</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+                    <span class="c1"># Write the length and width of the target found on the current graph</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">hog_img</span><span class="p">,</span> <span class="s2">&quot;w: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span>
+                                <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">hog_img</span><span class="p">,</span> <span class="s2">&quot;h: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+                                <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="c1"># Print the number of fish detected</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">hog_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
+        <span class="c1"># Shrink the image, the ratio is (0.2, 0.2), is conducive to display</span>
+        <span class="n">shrink_hog</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">hog_img</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Image_hog&quot;</span><span class="p">,</span> <span class="n">shrink_hog</span><span class="p">)</span>
+        <span class="c1"># The chart marked with the detection target is displayed</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;result/result_hog.jpg&quot;</span><span class="p">,</span> <span class="n">shrink_hog</span><span class="p">)</span></div>
+        <span class="c1"># Save the result graph</span>
+
+<div class="viewcode-block" id="Algorithm.sift_check"><a class="viewcode-back" href="../Algorithm.html#Algorithm.Algorithm.sift_check">[docs]</a>    <span class="k">def</span> <span class="nf">sift_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create the sift function</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">ShowImage</span><span class="o">.</span><span class="n">src_img</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
+        <span class="c1"># Reduce the image, the ratio is (0.2, 0.2), is conducive to shorten the detection time</span>
+        <span class="n">shrink</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">shrink</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="n">sift</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">SIFT</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="c1"># 3000 can be adjusted here, will be different results</span>
+        <span class="n">kp</span> <span class="o">=</span> <span class="n">sift</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Kp is the set of all 128 feature descriptors, ie the number of corners detected</span>
+        <span class="nb">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+        <span class="n">shrink</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">shrink</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;sift&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;result/sift.jpg&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Algorithm.surf_check"><a class="viewcode-back" href="../Algorithm.html#Algorithm.Algorithm.surf_check">[docs]</a>    <span class="k">def</span> <span class="nf">surf_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create the surf function</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">surf</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">SURF</span><span class="p">(</span><span class="mi">3500</span><span class="p">)</span>
+        <span class="c1"># Detection of the feature point, where the parameters 2000 according to the actual adjustment</span>
+        <span class="n">surf_img</span> <span class="o">=</span> <span class="n">ShowImage</span><span class="o">.</span><span class="n">src_img</span>
+        <span class="c1"># Call ShowImage.src_img</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">surf_img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="c1"># Grayscale processing</span>
+        <span class="n">kp</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Calculate the surf eigenvalue</span>
+        <span class="nb">print</span> <span class="n">res</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">surf_img</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># The green dot is detected by the surf algorithm</span>
+        <span class="c1"># Show feature points</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">))</span>
+        <span class="c1"># Prints the number of corners detected</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
+        <span class="c1"># Reduce the image, the ratio is (0.2, 0.2), conducive to display</span>
+        <span class="n">shrink</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;result/SURF.jpg&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;SURF&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="p">)</span></div></div>
+        <span class="c1"># Save the test results locally</span>
+
+
+
+
+
+
+
+
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, lu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
